@@ -146,8 +146,9 @@ def combine_input_prompt_chunks(
 
 class KVPreCompute(ABC):
     def __init__(self):
-        lmcache_config = lmcache_get_config()
-        self._blend_add_special_in_precomp = lmcache_config.blend_add_special_in_precomp
+        self.lmcache_config = lmcache_get_config()
+        logger.info(f"lmcache_config: {self.lmcache_config}")
+        self._blend_add_special_in_precomp = self.lmcache_config.blend_add_special_in_precomp
     @abstractmethod
     def precompute_kv(self, text_chunk):
         pass
@@ -191,7 +192,10 @@ class OfflineKVPreCompute(KVPreCompute):
         tokenizer_group = self.llm.llm_engine.input_preprocessor.get_tokenizer_group()
         add_special_tokens = self._blend_add_special_in_precomp or force_special_tokens
         # NOTE: No lora now.
-        ret = tokenizer_group.encode(text_chunk, add_special_tokens=add_special_tokens)
+        if self.lmcache_config.enable_blending:
+            ret = tokenizer_group.encode(text_chunk, add_special_tokens=add_special_tokens)
+        else:
+            ret = tokenizer_group.encode(text_chunk)
         # NOTE: No multi_modal_data here.
         return TokensPrompt(prompt_token_ids=ret)
 
