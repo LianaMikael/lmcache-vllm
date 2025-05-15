@@ -11,3 +11,6 @@ pip install lmcache==0.2.0
 pip install vllm==0.6.2
 ```
 
+Or use the updated Dockerfile in docker
+
+TODO: update vllm version to 0.8.5
