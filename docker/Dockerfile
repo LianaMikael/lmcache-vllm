@@ -109,8 +109,12 @@ RUN pip install dist_lmcache_vllm/*.whl --verbose
 
 RUN pip install lmcache==0.2.0
 RUN pip install vllm==0.6.2
+RUN pip install --upgrade "huggingface_hub[cli]"
+
 
 RUN pip install kvikio-cu12
 RUN python3 -m pip install --upgrade setuptools
+
+ENV PYTHONPATH="/workspace/lmcache-vllm/:${PYTHONPATH}"
 
 ENTRYPOINT ["lmcache_vllm", "serve"]
